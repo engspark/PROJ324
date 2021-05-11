@@ -1,4 +1,4 @@
-# ELEC324
+# PROJ324
 Project module.
 
 Coursework for 3rd year Project Module.

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
+
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
@@ -11,8 +12,9 @@ int main ()
 {
   int serial_port ;
   int serial_port1 ;
-  char dat[6] = "hello";
-  char dat1[8] = "goodbye";
+  char dat[8] = "hello\n";
+  char dat1[10] = "goodbye\n";
+  char dat3;
   
 
   // open serial port
@@ -30,7 +32,7 @@ int main ()
     return 1 ;
   }
   serial_port1 = serialOpen("/dev/ttyUSB0", 230400);
-  serial_port = serialOpen("/dev/ttyS0", 9600);
+  serial_port = serialOpen("/dev/ttyS0", 230400);
   
   while(1)
   {
@@ -38,12 +40,15 @@ int main ()
 	//if(serialDataAvail (serial_port) )
 	//{ 
 	  // receive character serially
-	  //dat = serialGetchar (serial_port);			
-	  //printf ("%s", dat) ;
+	  while(serialDataAvail(serial_port) >0){
+	  dat3 = serialGetchar (serial_port);			
+	  printf ("%c", dat3) ;
+	  }
+	  //fflush (stdout) ;
 	  serialPrintf(serial_port1, dat1);
-	  fflush (stdout) ;
-	  serialPrintf(serial_port, dat);
-	  fflush (stdout) ;
+	  //fflush (stdout) ;
+	  //serialPrintf(serial_port, dat);
+	  //fflush (stdout) ;
 	  delay (5);
 	  // transmit character serially on port
 

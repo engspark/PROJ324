@@ -10,8 +10,8 @@
 
 int main ()
 {
-  int serial_port ;
-  int serial_port1 ;
+  int IR_rx;
+  int VLC_tx;
   char dat[8] = "hello\n";
   char dat1[10] = "goodbye\n";
   char dat3;
@@ -31,8 +31,8 @@ int main ()
     fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
     return 1 ;
   }
-  serial_port = serialOpen("/dev/ttyUSB0", 9600);
-  serial_port1 = serialOpen("/dev/ttyS0", 230400);
+  IR_rx = serialOpen("/dev/ttyUSB0", 9600);
+  VLC_tx = serialOpen("/dev/ttyS0", 230400);
   
   while(1)
   {
@@ -40,12 +40,12 @@ int main ()
 	//if(serialDataAvail (serial_port) )
 	//{ 
 	  // receive character serially
-	  while(serialDataAvail(serial_port) >0){
-	  dat3 = serialGetchar (serial_port);			
+	  while(serialDataAvail(IR_rx) >0){
+	  dat3 = serialGetchar (IR_rx);			
 	  printf ("%c", dat3) ;
 	  }
 	  //fflush (stdout) ;
-	  serialPrintf(serial_port1, dat);
+	  serialPrintf(VLC_tx, dat);
 	  //fflush (stdout) ;
 	  //serialPrintf(serial_port, dat);
 	  //fflush (stdout) ;

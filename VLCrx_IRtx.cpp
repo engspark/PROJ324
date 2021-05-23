@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
@@ -61,35 +62,66 @@ int main ()
   VLC_rx = serialOpen("/dev/ttyUSB1", 230400);
   //serialPutchar( ,IR_tx)
   
-  char buffer_in[300];
+  char buffer_in[819200];
   int buffcount = 0;
+  
+  int blockcount = 0;
+ 
+ 
+   // Open File for writing
+  FILE *f_dst = fopen("fullpic.bmp", "ab");
+  if(f_dst == NULL)
+  {
+    printf("ERROR - Failed to open file for writing\n");
+    exit(1);
+  }
   
   
   while(1)
   {
 	  char dummy;
+	
 	  
       if(millis()-prev_millis > 1000){
 	if (buffcount != 0){
+	  printf("Buffer count is not zero\n");
 	  for(int i = 0; i<buffcount; i++){
 	  //printf("%d\r\n", buffcount);  			
 	  printf ("%c", buffer_in[i]) ;
+	  
+	  fwrite (&buffer_in[i], 1, 1, f_dst);
+	   
 	  }
+	  //printf("block count incremented\n");
+	  //fwrite (buffer_in, 1, buffcount, f_dst);
+	  blockcount++;
 	}
-      
-	buffcount = 0;
+	
+    if (blockcount == 1){      
+
+
+
+    // Close File
+    fclose(f_dst);
+    printf("File Recieved");
+    return 0;
+    //f_dst = NULL; 
+    }
+    buffcount = 0;
+    
       }
 	  
-	//if(serialDataAvail (VLC_rx) )
-	//{ 
+
 	  //receive character serially
-	  if(serialDataAvail(VLC_rx) >0){
+	  while(serialDataAvail(VLC_rx) >0){
 	  
 	  buffer_in[buffcount] = serialGetchar(VLC_rx);
 	  //dummy = serialGetchar(VLC_rx);
 	  prev_millis = millis();
+	  //printf("buffer count incremented\n");
 	  buffcount++;
 	  }
+	  
 	  //printf("%c", dummy);
 	  for(int i = 0; i<buffcount; i++){			
 	  //printf ("%c", buffer_in[i]) ;

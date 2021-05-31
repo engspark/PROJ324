@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 
-
+// Wiring Pi libraries for GPIO pin manipulation.
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
@@ -17,9 +17,7 @@ int main ()
   int VLC_rx ;
   int IR_tx ;
   char dat[8] = "hello\n";
-//  char dat1[100] = "Hello there, my name is josh.\n Howre you doing today?\n Is everything ok?\n";
 
-  //char dat1[120] = "Hello there, my name is josh.\n Howre you doing today?\n Is everything ok?\n";
   char dat3;
   
     //FILE * fileP;
@@ -33,35 +31,19 @@ int main ()
     buffer = (char*) malloc (sizeof(char)*size);
     if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
 
-    //// copying file into buffer
-    //final = fread (buffer,1,size,fileP);
-    //if (final != size) 
-    //{
-        //fputs ("Reading error",stderr); 
-        //exit (3);
-    //}
-    //// the whole file is now loaded in the memory buffer. 
 
-    //fclose (fileP);
-
-  // open serial port
-  /*if ((serial_port = serialOpen("/dev/ttyS0", 150)) < 0)	
-  {
-    
-    fprintf (stderr, "Unable to open serial device: %s\n", strerror (errno)) ;
-    return 1 ;
-  }
-  */
   // initializes wiringPi setup
   if (wiringPiSetup () == -1)					
   {
     fprintf (stdout, "Unable to start wiringPi: %s\n", strerror (errno)) ;
     return 1 ;
   }
+  // Open serial ports to thier respective speeds and assign them to the correct 
+  // data channels.
   IR_tx = serialOpen("/dev/ttyUSB0", 9600);
   VLC_rx = serialOpen("/dev/ttyUSB1", 230400);
-  //serialPutchar( ,IR_tx)
-  
+ 
+  // 800 Kilobyte character Buffer for data storage when being Recieved.
   char buffer_in[819200];
   int buffcount = 0;
   
@@ -103,7 +85,9 @@ int main ()
 
     // Close File
     fclose(f_dst);
+    // Print file Recieved to terminal.
     printf("File Recieved");
+    // Exit the program.
     return 0;
     //f_dst = NULL; 
     }
@@ -114,7 +98,7 @@ int main ()
 
 	  //receive character serially
 	  while(serialDataAvail(VLC_rx) >0){
-	  
+	  // Load recieved serial data into the buffer.
 	  buffer_in[buffcount] = serialGetchar(VLC_rx);
 	  //dummy = serialGetchar(VLC_rx);
 	  prev_millis = millis();
@@ -127,21 +111,12 @@ int main ()
 	  //printf ("%c", buffer_in[i]) ;
 	  }
 	  
-	  //buffcount = 0;
-	  //fflush (stdout) ;
-	 // delay(1000);
-	  //serialPuts(IR_tx, "Make thing thing long\n much better now\n");
+	  // Transmit data string down the IR channel.
 	  serialPuts(IR_tx, dat);
-	  //fflush (stdout) ;
-	  //serialPrintf(serial_port, dat);
-	  //fflush (stdout) ;
-	  //delay (50);
-	  // transmit character serially on port
-	//return 0;
-	  		
-	//}
+
 
   }
+  // Close serial port.
   serialClose(IR_tx);
 
 }

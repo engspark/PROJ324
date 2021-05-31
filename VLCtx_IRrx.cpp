@@ -4,7 +4,7 @@
 #include <string.h>
 #include <errno.h>
 
-
+// Wiring Pi libraries for GPIO pin manipulation.
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
@@ -14,6 +14,7 @@ int main ()
   int IR_rx;
   int VLC_tx;
   //char dat[8] = "hello\n";
+  // Sample charater buffers for data transmission
   char dat[120] = "Hello there, my name is josh.\n Howre you doing today?\n Is everything ok?\n";
   char dat1[10] = "goodbye\n";
   char dat3;
@@ -56,7 +57,7 @@ int main ()
     rewind (fileP);
     printf("%u" ,size);
 
-    // allocating mem for file
+    // allocating memory for file
     buffer = (char*) malloc (sizeof(char)*size);
     if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
 
@@ -68,7 +69,7 @@ int main ()
         exit (3);
     }
     // the whole file is now loaded in the memory buffer. 
-
+    // Close file.
     fclose (fileP);
     
     
@@ -77,35 +78,28 @@ int main ()
 
 	  //char dumbo = 'j';
 	  char dataloop[30] = "Hello there\n General Kenobi!\n";
+      // 10 Second delay before program starts.
 	  delay(10000);
 	  //while(scanf("%c", dumbo) <= 0){}
 
-	//if(serialDataAvail (serial_port) )
-	//{ 
-	  // receive character serially
+
+	  // Constantly receive character serially
 	  while(serialDataAvail(IR_rx) >0){
 	  dat3 = serialGetchar(IR_rx);
 	  printf ("%c", dat3);
 	  }
 	  
-//	  serialPuts(VLC_tx, buffer);
-//serialPuts (VLC_tx, "Hello there\n General Kenobi!\n");
-	  //serial
-	  
+	  // Send the data string until buffer is empty.
 	  for(int i=0; i<size; i++){
 	  serialPutchar(VLC_tx,buffer[i]);	  
 	  
 	  }
-	  
+	  // 2 Second Delay to indicate transmission has finished
 	  delay(2000);
 	  //delay (15);
 	  //return 0;
 	  
-	  // transmit character serially on port
-      //printf ("%c", *buffer) ;
-	  		
-	//}
-	//delay(1);
+
   }
   //return 0;
 
